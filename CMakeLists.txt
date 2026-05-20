@@ -35,3 +35,13 @@ endif()
 
 add_executable(mini_kv_server src/main.cpp)
 target_link_libraries(mini_kv_server PRIVATE minikv)
+
+enable_testing()
+
+add_executable(command_test tests/command_test.cpp)
+target_link_libraries(command_test PRIVATE minikv)
+add_test(NAME command_test COMMAND command_test)
+
+add_executable(key_value_store_test tests/key_value_store_test.cpp)
+target_link_libraries(key_value_store_test PRIVATE minikv)
+add_test(NAME key_value_store_test COMMAND key_value_store_test)

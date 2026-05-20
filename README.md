@@ -38,6 +38,8 @@ GET 27
 NOT_FOUND
 ```
 
+
+
 ## 项目结构
 
 ```text
@@ -66,6 +68,8 @@ mini_kv_server/
       server.cpp
     main.cpp
 ```
+
+
 
 ## 构建与运行
 
@@ -98,6 +102,47 @@ cmake --build build
 ./build/mini_kv_server --port 9000 --workers 4 --queue 64 --backlog 64
 ```
 
+
+
+## 测试
+
+本项目包含两类测试：
+
+- C++ 单元测试：验证命令解析和 KeyValueStore 的基础行为。
+- Python 冒烟测试：通过 TCP 连接真实服务端，验证 PING/SET/GET/DEL/SIZE/EXIT 主流程。
+
+### 运行 C++ 单元测试
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+Windows + Visual Studio 生成器：
+
+```powershell
+cmake -S . -B build
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure
+```
+
+### 运行 smoke test
+
+先启动服务端：
+
+```bash
+.\build\Release\mini_kv_server.exe --port 9000 --workers 4 --queue 64 --backlog 64
+```
+
+再打开另一个终端：
+
+```bash
+python tests/smoke_test.py
+```
+
+
+
 ## 客户端测试
 
 可以使用 `telnet` 连接服务端：
@@ -123,6 +168,8 @@ telnet 127.0.0.1 9000
 ![server listening](docs/images/59ea62072883bd541bc5b96aaf000644.png)
 
 注意：**服务端窗口不是交互式命令行**，不能直接输入 `PING` 或 `SET`。命令需要在客户端窗口输入，服务端只负责监听端口和处理连接。
+
+
 
 ## 实现要点
 
@@ -156,11 +203,15 @@ TCP 是字节流，不保证一次 `recv()` 就刚好读到一条完整命令。
 - 使用 `telnet` 测试时，Backspace 的表现取决于 telnet 客户端。某些环境会把 Backspace 作为控制字符发送给服务端，而当前 `read_line()` 没有处理 `\b` 或 `0x7f`，所以可能无法像普通命令行一样删除字符。后续可以在服务端处理退格控制字符，或者单独实现一个更友好的客户端。
 - 当前还缺少自动化测试和压测脚本，后续可以补充 smoke test、并发连接测试和基础 benchmark。
 
+
+
 ## 更多说明
 
 代码中的关键注释和相关知识点整理在：
 
 [docs/implementation_notes.md](docs/implementation_notes.md)
+
+
 
 ## 版权声明
 
