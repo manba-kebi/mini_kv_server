@@ -131,8 +131,16 @@ ctest --test-dir build -C Release --output-on-failure
 
 先启动服务端：
 
-```bash
+- `Windows` 是：
+
+```powershell
 .\build\Release\mini_kv_server.exe --port 9000 --workers 4 --queue 64 --backlog 64
+```
+
+- `Linux` 应该是：
+
+```bash
+./build/mini_kv_server --port 9000 --workers 4 --queue 64 --backlog 64
 ```
 
 再打开另一个终端：
