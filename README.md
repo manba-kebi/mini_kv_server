@@ -119,7 +119,8 @@ cmake --build build
 ctest --test-dir build --output-on-failure
 ```
 <img width="2465" height="1479" alt="image" src="https://github.com/user-attachments/assets/fa2f3387-dd2c-4d96-892f-e65c360b6a49" />
-如图所示，已在 `Ubuntu` 下通过 `CMake/CTest` 验证
+如上图所示，已在 `Ubuntu` 下通过 `CMake/CTest` 验证
+
 
 Windows + Visual Studio 生成器：
 
