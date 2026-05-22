@@ -118,8 +118,10 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ctest --test-dir build --output-on-failure
 ```
-<img width="2465" height="1479" alt="image" src="https://github.com/user-attachments/assets/fa2f3387-dd2c-4d96-892f-e65c360b6a49" />
+![ec8cbe9f0548202b1aa1ef85aaa413f8](D:\xwechat_files\wxid_0075mbe8qd1922_8475\temp\RWTemp\2026-05\ec8cbe9f0548202b1aa1ef85aaa413f8.png)
 如上图所示，已在 `Ubuntu` 下通过 `CMake/CTest` 验证
+
+
 
 
 Windows + Visual Studio 生成器：
