@@ -1,0 +1,93 @@
+(base) akai@akai-XiaoXinPro-16-IAH7:~/download/windows_to_linux/mini_kv_server$ python3 tools/benchmark.py 
+Exception in thread Thread-6 (worker):
+Exception in thread Thread-1 (worker):
+Exception in thread Thread-7 (worker):
+Exception in thread Thread-3 (worker):
+Exception in thread Thread-8 (worker):
+Exception in thread Thread-5 (worker):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+Traceback (most recent call last):
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 24, in worker
+    request(sock,f"GET {key}")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 13, in request
+    sock.sendall((cmd+"\n").encode())
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 24, in worker
+    request(sock,f"GET {key}")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 24, in worker
+    request(sock,f"GET {key}")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 13, in request
+    sock.sendall((cmd+"\n").encode())
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 13, in request
+    sock.sendall((cmd+"\n").encode())
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 24, in worker
+    request(sock,f"GET {key}")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 13, in request
+    sock.sendall((cmd+"\n").encode())
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 24, in worker
+    request(sock,f"GET {key}")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/akai/anaconda3/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 13, in request
+    sock.sendall((cmd+"\n").encode())
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 24, in worker
+    request(sock,f"GET {key}")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/akai/download/windows_to_linux/mini_kv_server/tools/benchmark.py", line 13, in request
+    sock.sendall((cmd+"\n").encode())
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+BrokenPipeError: [Errno 32] Broken pipe
+(base) akai@akai-XiaoXinPro-16-IAH7:~/download/windows_to_linux/mini_kv_server$ 
+

@@ -118,7 +118,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ctest --test-dir build --output-on-failure
 ```
-![ec8cbe9f0548202b1aa1ef85aaa413f8](D:\xwechat_files\wxid_0075mbe8qd1922_8475\temp\RWTemp\2026-05\ec8cbe9f0548202b1aa1ef85aaa413f8.png)
+![ubuntu](C:\Users\28251\Desktop\mini_kv_server\docs\images\ubuntu.png)
 如上图所示，已在 `Ubuntu` 下通过 `CMake/CTest` 验证
 
 
@@ -223,6 +223,42 @@ TCP 是字节流，不保证一次 `recv()` 就刚好读到一条完整命令。
 代码中的关键注释和相关知识点整理在：
 
 [docs/implementation_notes.md](docs/implementation_notes.md)
+
+GDB 请求链路与 core dump：
+
+[docs/linux_debug_notes.md](docs/linux_debug_notes.md)
+
+Linux 网络状态与系统调用观察：
+
+[docs/linux_network_notes.md](docs/linux_network_notes.md)
+
+
+
+### workers/queue/backlog
+
+在你这个 `mini_kv_server` 里，三者关系是这样的：
+
+```text
+客户端发起连接
+  -> Linux 内核 listen/backlog 队列
+  -> Server::run() 调用 accept()
+  -> accept 成功后生成一个客户端 socket
+  -> pool_.submit(...) 投递到线程池任务队列 max_queue_size
+  -> worker 线程执行 handle_client()
+  -> handle_client() 循环读取这个客户端的命令
+```
+
+- workers=4 表示最多**同时有 4 个 worker 线程在处理客户端连接**。
+- max_queue_size=64 表示**线程池**最多可以**暂存 64 个“已经 accept 成功、但还没被 worker 处理的客户端连接任务**。
+- `backlog` 更靠前，它属于 Linux 内核，不属于线程池。可以理解成 内核帮 listen socket 暂存一批等待 accept 的连接。
+
+```text
+worker_count = 最多同时处理多少个客户端连接
+max_queue_size = 最多缓存多少个等待处理的客户端连接任务
+backlog = 内核最多缓存多少个等待 accept 的新连接
+```
+
+
 
 
 
