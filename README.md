@@ -232,6 +232,10 @@ Linux 网络状态与系统调用观察：
 
 [docs/linux_network_notes.md](docs/linux_network_notes.md)
 
+benchmark 与背压测试：
+
+[docs/benchmark_notes.md](docs/benchmark_notes.md)
+
 
 
 ### workers/queue/backlog
