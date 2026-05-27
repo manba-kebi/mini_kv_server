@@ -264,6 +264,15 @@ backlog = 内核最多缓存多少个等待 accept 的新连接
 
 
 
+### CI
+
+本项目使用GitHub Actions在Ubuntu和Windows上进行构建和测试。
+
+当前CI检查：
+
+- Ubuntu: CMake configure, Release build, CTest
+- Windows: CMake configure, Release build, CTest
+
 
 
 ## 版权声明
