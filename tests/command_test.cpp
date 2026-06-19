@@ -2,7 +2,7 @@
 #include <string>
 #include "minikv/core/command.h"
 
-//²âÊÔÃüÁî½âÎöÄ£¿é£¬²»ĞèÒªÆô¶¯ÍøÂç·şÎñ¡£ËüÖ±½Óµ÷ÓÃ `parse_command()`£¬ÑéÖ¤ÊäÈë×Ö·û´®ÄÜ·ñ±ä³ÉÕıÈ·µÄ `Command`¡£
+//æµ‹è¯•å‘½ä»¤è§£ææ¨¡å—ï¼Œä¸éœ€è¦å¯åŠ¨ç½‘ç»œæœåŠ¡ã€‚å®ƒç›´æ¥è°ƒç”¨ `parse_command()`ï¼ŒéªŒè¯è¾“å…¥å­—ç¬¦ä¸²èƒ½å¦å˜æˆæ­£ç¡®çš„ `Command`ã€‚
 int main() {
 	using minikv::core::CommandType;
 	using minikv::core::parse_command;

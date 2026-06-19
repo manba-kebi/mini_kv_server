@@ -2,7 +2,7 @@
 #include <cassert>
 #include <string>
 
-//测试 KV 存储模块，不启动服务端，不经过命令解析，直接验证 `set/get/erase/keys/size`
+//娴嬭瘯 KV 瀛樺偍妯″潡锛屼笉鍚姩鏈嶅姟绔紝涓嶇粡杩囧懡浠よВ鏋愶紝鐩存帴楠岃瘉 `set/get/erase/keys/size`
 int main() {
 	minikv::core::KeyValueStore store;
 
