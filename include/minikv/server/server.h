@@ -4,21 +4,16 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <cstddef>
 
 #include "minikv/core/command.h"
 #include "minikv/core/key_value_store.h"
 #include "minikv/core/thread_pool.h"
 #include "minikv/net/socket.h"
 
-#include <array>
-#include <cstddef>
-#include <iostream>
-#include <memory>
-#include <mutex>
-#include <sstream>
-#include <string>
-#include <utility>
-#include <vector>
+namespace asynclogger {
+	class AsyncLogger;
+}
 
 //server:监听端口、接受连接、把连接投递给线程池、读取命令、执行 KV 操作、返回响应。
 
@@ -31,7 +26,8 @@ namespace minikv::server {
 	};
 	class Server {
 	public:
-		explicit Server(Serverconfig config);
+		// explicit Server(Serverconfig config);
+		Server(Serverconfig config,asynclogger::AsyncLogger& logger);
 
 		bool start();
 		void run();
@@ -49,6 +45,7 @@ namespace minikv::server {
 		std::string execute_command(const core::Command& command,bool& should_cloce);
 
 		Serverconfig config_;
+		asynclogger::AsyncLogger& logger_;
 		net::Socket listen_socket_;
 		core::ThreadPool pool_;
 		core::KeyValueStore store_;
@@ -56,4 +53,4 @@ namespace minikv::server {
 		//原子布尔变量，用于在多线程环境下安全地记录“服务器是否已启动”
 
 	};
-}
+}	//namespace minikv::server

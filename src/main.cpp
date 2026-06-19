@@ -10,6 +10,7 @@
 
 //提供命令行入口，初始化 socket runtime，解析参数，启动服务器。
 
+#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
@@ -17,6 +18,7 @@
 #include <string>
 #include <string_view>
 
+#include "asynclogger/async_logger.h"
 #include "minikv/net/socket_runtime.h"
 #include "minikv/server/server.h"
 
@@ -60,7 +62,7 @@ namespace {
 		value = static_cast<std::size_t>(parsed);
 		return true;
 	}
-}
+}	//namespace
 
 int main(int argc,char* argv[]) {
 	minikv::net::SocketRuntime runtime;
@@ -125,7 +127,18 @@ int main(int argc,char* argv[]) {
 			return 1;
 		}
 	}
-	minikv::server::Server server(config);
+
+	asynclogger::LoggerConfig logger_config;
+	logger_config.file_path = "logs/mini_kv_server.log";
+	logger_config.max_queue_size = 4096;
+	logger_config.roll_size_bytes = 10*1024*1024;
+	logger_config.overflow_policy = asynclogger::OverflowPolicy::Drop;		//服务端的业务线程不应该因为日志队列满了就无限等待。
+	logger_config.auto_flush = true;	//当前 `server.run()` 是无限循环，手动测试一般用 Ctrl+C 停进程。Ctrl+C 不保证 C++ 析构函数完整执行，所以尾部日志有机会停留在缓冲区里。
+
+	asynclogger::AsyncLogger logger(logger_config);
+
+	// minikv::server::Server server(config);
+	minikv::server::Server server(config,logger);
 	if (!server.start()) {
 		return 1;
 	}

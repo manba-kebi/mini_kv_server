@@ -10,15 +10,23 @@
 
 #include "minikv/server/server.h"
 
+#include <array>
+#include <cmath>
+#include <sstream>
+#include <utility>
+#include <vector>
+
+#include "asynclogger/async_logger.h"
 #include "minikv/net/socket_runtime.h"
+
 namespace minikv::server {
 	namespace {
-		std::mutex g_log_mutex;		//全局日志锁，避免多线程日志交错
-
-		void log_line(const std::string& message) {
-			std::lock_guard<std::mutex> lock(g_log_mutex);
-			std::cout << message << std::endl;
-		}
+		// std::mutex g_log_mutex;		//全局日志锁，避免多线程日志交错
+		//
+		// void log_line(const std::string& message) {
+		// 	std::lock_guard<std::mutex> lock(g_log_mutex);
+		// 	std::cout << message << std::endl;
+		// }
 
 		std::string join_keys(const std::vector<std::string>& keys) {
 			//后面的execute_command()模块会用到
@@ -33,23 +41,32 @@ namespace minikv::server {
 			return output.str();
 		}
 	}
-	Server::Server(Serverconfig config) :config_(config),
-		pool_(config.worker_count, config.max_queue_size) {
-	}
+
+	// Server::Server(Serverconfig config) :config_(config),
+	// 	pool_(config.worker_count, config.max_queue_size) {
+	// }
+	Server::Server(Serverconfig config,asynclogger::AsyncLogger& logger)
+		:config_(config),
+		logger_(logger),
+		pool_(config_.worker_count,config_.max_queue_size){}
+
 
 	bool Server::start() {
 		auto socket = net::Socket::create_tcp();
 		if (!socket.has_value()) {
-			log_line("[server] failed to create listen socket: " + net::last_socket_error_message());
+			// log_line("[server] failed to create listen socket: " + net::last_socket_error_message());
+			logger_.error("[server] failed to create listen socket: " + net::last_socket_error_message());
 			return false;
 		}
 
 		if (!socket->set_reuse_address()) {
-			log_line("[server] warning: failed to enable SO_REUSEADDR");
+			// log_line("[server] warning: failed to enable SO_REUSEADDR");
+			logger_.warn("[server] warning: failed to enable SO_REUSEADDR");
 		}
 
 		if (!socket->bind_and_listen(config_.port, config_.backlog)) {
-			log_line("[server] bind/listen failed: " + net::last_socket_error_message());
+			// log_line("[server] bind/listen failed: " + net::last_socket_error_message());
+			logger_.error("[server] bind/listen failed: " + net::last_socket_error_message());
 			return false;
 		}
 
@@ -57,23 +74,31 @@ namespace minikv::server {
 		//这里 socket 的类型是 std::optional<Socket>
 		started_ = true;
 
-		log_line(
-			"[server] listening on port " + std::to_string(config_.port) +
-			",workers=" + std::to_string(pool_.worker_count()) +
-			",queue=" + std::to_string(config_.max_queue_size));
+		// log_line(
+		// 	"[server] listening on port " + std::to_string(config_.port) +
+		// 	",workers=" + std::to_string(pool_.worker_count()) +
+		// 	",queue=" + std::to_string(config_.max_queue_size));
+		logger_.info(
+		"[server] listening on port " + std::to_string(config_.port) +
+				",workers=" + std::to_string(pool_.worker_count()) +
+				",queue=" + std::to_string(config_.max_queue_size)
+		);
+
 		return true;
 	}
 
 	void Server::run() {
 		if (!started_) {
-			log_line("[server] start() must succeed before run()");
+			// log_line("[server] start() must succeed before run()");
+			logger_.error("[server] start() must succeed before run()");
 			return;
 		}
 
 		while (true) {
 			auto client = listen_socket_.accept();
 			if (!client.has_value()) {
-				log_line("[server] accept failed: " + net::last_socket_error_message());
+				// log_line("[server] accept failed: " + net::last_socket_error_message());
+				logger_.error("[server] accept failed: " + net::last_socket_error_message());
 				continue;
 			}
 
@@ -85,6 +110,8 @@ namespace minikv::server {
 				});
 
 			if (!accepted) {
+				logger_.warn("[Server] rejected client because worker queue is full");
+
 				client_ptr->send_all("BUSY server queue is full ,retry later\n");
 				client_ptr->shutdown_both();
 				client_ptr->close();
@@ -130,7 +157,7 @@ namespace minikv::server {
 	}
 
 	void Server::handle_client(const std::shared_ptr<net::Socket>& client) {
-		client->send_all("WELCOME mini_kv_server.Type HELP for commands.\n");
+		client->send_all("WELCOME mini_kv_server. Type HELP for commands.\n");
 
 		std::string pending;
 		std::string line;
@@ -198,7 +225,8 @@ namespace minikv::server {
 
 		case core::CommandType::Invalid:
 			return "ERR " + command.error + '\n';
-	}
-	return "ERR unhandled command\n";
+		}
+
+		return "ERR unhandled command\n";
 	}
 }
