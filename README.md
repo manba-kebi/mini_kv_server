@@ -210,11 +210,11 @@ TCP 是字节流，不保证一次 `recv()` 就刚好读到一条完整命令。
 
 ## 当前限制与后续优化
 
-- 当前使用阻塞 IO，一个慢客户端可能长期占用一个 worker；后续可以考虑非阻塞 IO 或 IO multiplexing。
-- 当前数据只保存在内存中，进程退出后数据丢失；后续可以增加日志文件或快照持久化。
+- 当前主版本使用阻塞 IO，一个慢客户端可能长期占用一个 worker；后续会增加 Linux epoll/Reactor 版本，用非阻塞 IO 管理大量连接。
+- 当前数据默认只保存在内存中，进程退出后数据丢失；后续会增加 append-only file 持久化，并在启动时回放恢复数据。
 - 当前协议是简单文本协议，没有鉴权、超时控制和更完整的错误码。
-- 使用 `telnet` 测试时，Backspace 的表现取决于 telnet 客户端。某些环境会把 Backspace 作为控制字符发送给服务端，而当前 `read_line()` 没有处理 `\b` 或 `0x7f`，所以可能无法像普通命令行一样删除字符。后续可以在服务端处理退格控制字符，或者单独实现一个更友好的客户端。
-- 当前还缺少自动化测试和压测脚本，后续可以补充 smoke test、并发连接测试和基础 benchmark。
+- 使用 `telnet` 测试时，Backspace 的表现取决于 telnet 客户端。某些环境会把 Backspace 作为控制字符发送给服务端，而当前 `read_line()` 没有处理 `\b` 或 `0x7f`。
+- 当前已有 C++ 单元测试、Python smoke test、基础 benchmark 和背压测试脚本；后续会把 smoke test 纳入 GitHub Actions，并补充包含 p50/p95/p99 延迟的 benchmark 矩阵。
 
 
 
