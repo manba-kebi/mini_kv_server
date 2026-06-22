@@ -7,6 +7,7 @@ on:
 jobs:
   build-and-test:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
 
@@ -22,5 +23,14 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel
 
-      - name: Test
+      - name: Unit tests
         run: ctest --test-dir build -C Release --output-on-failure
+
+      - name: Smoke test on Ubuntu
+        if: runner.od == 'Linux'
+        shell: bash
+        run: |
+          ./build/mini_kv_server --port 9000 --workers 4 --queue 64 --backlog 64 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          python3 tests/smoke_test.py --host 127.0.0.1 --port 9000 --timeout 5
