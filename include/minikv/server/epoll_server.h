@@ -19,7 +19,7 @@ namespace asynclogger {
 
 namespace minikv::server {
 
-    struct EpollServerconfig {
+    struct EpollServerConfig {
         std::uint16_t port{9000};       //端口
         int backlog{512};
         int max_events{128};        //最大事件数
@@ -66,6 +66,6 @@ namespace minikv::server {
         core::KeyValueStore store_;
         std::unique_ptr<core::AppendOnlyFile> aof_;
         std::unordered_map<int,Connection> connections_;
-        bool started{false};
+        bool started_{false};
     };
 }   // namespace minikv::server
