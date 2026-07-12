@@ -26,6 +26,7 @@ add_library(minikv					# 创建一个名为 minikv 的静态库（默认类型�
 	src/core/thread_pool.cpp
 	src/core/key_value_store.cpp
 	src/core/command.cpp
+	src/core/append_only_file.cpp		# 这个AOF文件是后填的，可以用于在崩溃后按顺序回放恢复状态
 	src/server/server.cpp
 )
 
@@ -52,6 +53,22 @@ endif()
 
 add_executable(mini_kv_server src/main.cpp)
 target_link_libraries(mini_kv_server PRIVATE minikv)
+
+if(UNIX AND NOT APPLE)
+	add_library(minikv_epoll
+		src/server/epoll_server.cpp
+	)
+
+	target_link_libraries(minikv_epoll
+		PUBLIC
+			minikv
+	)
+
+	target_compile_options(minikv_epoll PRIVATE -Wall -Wextra -Wpedantic)
+
+	add_executable(mini_kv_server_epoll src/epoll_main.cpp)
+	target_link_libraries(mini_kv_server_epoll PRIVATE minikv_epoll)
+endif()
 
 enable_testing()
 
