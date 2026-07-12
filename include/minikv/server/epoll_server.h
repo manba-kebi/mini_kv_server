@@ -50,7 +50,7 @@ namespace minikv::server {
 
         bool add_fd(int fd,std::uint32_t events);
         bool update_fd(int fd,std::uint32_t events);
-        void accept_new_connection();
+        void accept_new_connections();
         void handle_connection_event(int fd,std::uint32_t events);
         void handle_read(int fd,Connection& connection);
         void handle_write(int fd,Connection& connection);

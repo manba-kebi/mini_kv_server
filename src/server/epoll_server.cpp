@@ -47,7 +47,7 @@ namespace minikv::server {
 
         // 基础连接事件集合
         std::uint32_t base_connection_events() {
-            return EPOLLIN | EPOLLRDHUP | RPOLLERR | EPOLLHUP;
+            return EPOLLIN | EPOLLRDHUP | EPOLLERR | EPOLLHUP;
             // EPOLLIN：    数据可读（客户端发来了数据）
             // EPOLLRDHUP： 客户端半关闭连接（对方调用了 shutdown(SHUT_WR)）
             // EPOLLERR：   发生错误
@@ -97,6 +97,12 @@ namespace minikv::server {
             return false;
         }
 
+        listen_socket_ = std::move(*socket);
+        if(!set_non_blocking(listen_socket_.native_handle())){
+            logger_.error("[epoll] failed to set listen socket non-blocking: "+std::string(std::strerror(errno)));
+            return false;
+        }
+
         // 创建 epoll 实例
         epoll_fd_ = ::epoll_create1(EPOLL_CLOEXEC);
         // epoll_create1：Linux 系统调用，创建一个 epoll 实例
@@ -109,7 +115,7 @@ namespace minikv::server {
 
         //将监听套接字加入 epoll 监控
         // epoll 会监控这个 fd 上的事件（这里只监控EPOLLIN，即可读事件）
-        if (!add_fd(listen_socket.native_handle(),EPOLLIN)) {
+        if (!add_fd(listen_socket_.native_handle(),EPOLLIN)) {
             // native_handle() 返回底层的 fd 整数
             // 当有新连接到来时，listen socket 变为可读
             logger_.error("[epoll] failed to add listen socket to epoll");
@@ -148,7 +154,7 @@ namespace minikv::server {
                 );
 
             if (ready < 0) {        // 返回负数表示出错
-                if (errno = EINTR) {        // EINTR：被信号中断
+                if (errno == EINTR) {        // EINTR：被信号中断
                     continue;    // 这不算错，重新等待
                 }
                 logger_.error("[epoll] epoll_wait failed: " + std::string(std::strerror(errno)));
@@ -163,7 +169,7 @@ namespace minikv::server {
 
                 if (fd == listen_socket_.native_handle()) {
                     // 如果是监听套接字就绪，说明有新连接
-                    accept_new_connection();
+                    accept_new_connections();
                 }else {
                     // 否则是客户端连接有数据或事件
                     handle_connection_event(fd,event_mask);
@@ -194,7 +200,7 @@ namespace minikv::server {
     }
 
     //接受新连接
-    void EpollServer::accept_new_connection() {
+    void EpollServer::accept_new_connections() {
         while (true) {      //循环接受所有待处理的连接
             auto client = listen_socket_.accept();
             //accept() 从全连接队列中取出一个客户端连接
@@ -461,7 +467,7 @@ namespace minikv::server {
 
             case core::CommandType::Del: {
                 //DEL命令: 删除 键key
-                if (!store.get(command.key).has_value()) {
+                if (!store_.get(command.key).has_value()) {
                     return "NOT_FOUND\n";
                 }
                 if (aof_) {     //先记录AOF日志

@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
             }
         }else if (arg == "--max-line") {
             if (!parse_size(value,config.max_line_length) || config.max_line_length == 0) {
-                std::cerr << "Invalid max-line: " << vaalue << '\n';
+                std::cerr << "Invalid max-line: " << value << '\n';
                 return 1;
             }
         }else if (arg == "--aof") {
